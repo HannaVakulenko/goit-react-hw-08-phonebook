@@ -1,49 +1,72 @@
-export const theme = {
-  colors: {
-    black: '#000',
-    white: '#fff',
-    text: '#2a2a2a',
-    background: '#3f4c6b',
-    accent: '#9e0202',
-    muted: '#f6f6f6',
-    btnPrimary: '#95999e',
-    btnSecondary: '#dee0e0',
-    error: 'red',
-  },
-  fonts: {
-    body: 'system-ui, sans-serif',
-    heading: 'system-ui, sans-serif',
-    monospace: 'Menlo, monospace',
-  },
-  fontSizes: {
-    xs: '12px',
-    s: '14px',
-    m: '16px',
-    l: '28px',
-    xl: '64px',
-  },
-  fontWeights: {
-    normal: 400,
-    bold: 700,
-  },
-  lineHeights: {
-    body: 1.5,
-    heading: 1.125,
-  },
-  borders: {
-    none: 'none',
-    normal: '1px solid',
-  },
-  radii: {
-    none: '0',
-    normal: '4px',
-    round: '50%',
-  },
-  shadows: {
-    textShadow: '0 1px 1px #fff',
-    boxShadowHeader: '8px 8px 8px -8px #000000, -4px 0px 8px 0px #000000',
-    boxShadowDiv: '10px 10px 18px -12px #000000',
-  },
-};
+import { extendTheme } from '@chakra-ui/react';
 
-//${props => props.theme.shadows.boxShadowHeader} - для вставки в правила стилів
+export const theme = extendTheme({
+  colors: {
+    brand: {
+      // light
+      50: '#708aa6', //header-footer
+      100: '#a6b3bf', //button
+      200: '#4b627a', //hover
+      300: '#f3ede3', //active
+      400: '#4b627a', //random
+      // dark
+      500: '#474042', //header-footer
+      600: '#8E8679', //button
+      700: '#706468', //hover
+      800: '#6D8F90', //active
+      900: '#91510c', //random
+      // other
+      1000: '#fffde8', //moon
+      1100: '#fff175', //sun
+    },
+  },
+  textStyles: {
+    link: {
+      textDecoration: 'underline',
+    },
+  },
+  components: {
+    Button: {
+      variants: {
+        brand: props => ({
+          bg: props.colorMode === 'dark' ? 'brand.600' : 'brand.100',
+          boxShadow: 'md',
+          _hover: {
+            bg: props.colorMode === 'dark' ? 'brand.700' : 'brand.200',
+          },
+        }),
+      },
+    },
+    IconButton: {
+      variants: {
+        brand: props => ({
+          bg: props.colorMode === 'dark' ? 'brand.600' : 'brand.100',
+          colorScheme: props.colorMode === 'dark' ? 'brand.1100' : 'brand.1000',
+          boxShadow: 'md',
+          _hover: {
+            bg: props.colorMode === 'dark' ? 'brand.700' : 'brand.200',
+          },
+        }),
+      },
+    },
+    Link: {
+      variants: {
+        brand: props => ({
+          py: '2',
+          px: '2',
+          borderRadius: '6px',
+          bg: props.colorMode === 'dark' ? 'brand.600' : 'brand.100',
+          boxShadow: 'md',
+          _hover: {
+            bg: props.colorMode === 'dark' ? 'brand.700' : 'brand.200',
+          },
+
+          _activeLink: {
+            bg: props.colorMode === 'dark' ? 'brand.800' : 'brand.300',
+            fontWeight: 700,
+          },
+        }),
+      },
+    },
+  },
+});

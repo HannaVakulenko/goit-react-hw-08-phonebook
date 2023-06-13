@@ -1,5 +1,7 @@
 import { useContacts } from 'hooks/useContacts';
-import toast from 'react-hot-toast';
+import { phoneNumberScheme } from 'utils/phoneNumberSheme';
+import { removeDelimiters } from 'utils/removeDelimiters';
+
 import {
   Input,
   Stack,
@@ -11,10 +13,9 @@ import {
   InputLeftAddon,
 } from '@chakra-ui/react';
 import { BsFillPersonFill } from 'react-icons/bs';
-import { phoneNumberScheme } from 'utils/phoneNumberSheme';
 
-export const ContactsForm = ({ onSubmit }) => {
-  const { isAllContacts, addContact } = useContacts();
+export const UpdateContact = ({ id, name, number, onSubmit }) => {
+  const { updateContact } = useContacts();
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -23,24 +24,14 @@ export const ContactsForm = ({ onSubmit }) => {
     const name = form.elements.name.value.trim();
     const number = form.elements.number.value;
 
-    const isNameAlreadyExist = isAllContacts.some(
-      contact => contact.name.toLowerCase().trim() === name.toLowerCase()
-    );
-
-    if (isNameAlreadyExist) {
-      toast.error(`${name} is already exist.`, {
-        position: 'top-center',
-      });
-      return;
-    }
-
-    const newContact = {
+    const updatedContact = {
+      id,
       name,
       number: phoneNumberScheme(number),
     };
 
     try {
-      await addContact(newContact);
+      await updateContact(updatedContact);
       form.reset();
       onSubmit();
     } catch (error) {
@@ -63,7 +54,7 @@ export const ContactsForm = ({ onSubmit }) => {
             <Input
               as="input"
               name="name"
-              placeholder="Name"
+              defaultValue={name}
               minLength={3}
               id="name"
             />
@@ -76,14 +67,14 @@ export const ContactsForm = ({ onSubmit }) => {
             <Input
               as="input"
               name="number"
-              placeholder="(XXX)-XX-XX-XXX"
               minLength={10}
               maxLength={10}
               id="number"
+              defaultValue={removeDelimiters(number)}
             />
           </InputGroup>
           <Button type="submit" variant="brand" mt={4}>
-            Add contact
+            Update contact
           </Button>
         </Stack>
       </form>

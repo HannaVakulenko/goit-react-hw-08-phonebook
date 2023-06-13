@@ -1,36 +1,52 @@
-import { useDispatch } from 'react-redux';
-import { DataList, DataItem, BtnDeleteContact } from './ContactsList.styled';
-import { MdDeleteForever } from 'react-icons/md';
-import { Notification } from 'components/Notification/Notification';
+import { useSelector } from 'react-redux';
+import { selectFilter } from 'redux/contacts/selectors';
+import { useContacts } from 'hooks/useContacts';
+import { Contact } from '../Contact/Contact';
+import { Container, List, ListItem, Text } from '@chakra-ui/react';
 
-import { deleteContact } from 'redux/contacts/operations';
-import { useFilteredContacts } from 'redux/contacts/hooks';
+const sortedItems = array => {
+  return array.slice().sort((a, b) => {
+    const fa = a.name.toLowerCase();
+    const fb = b.name.toLowerCase();
+    return fa.localeCompare(fb);
+  });
+};
 
 export const ContactsList = () => {
-  const contacts = useFilteredContacts();
+  const filter = useSelector(selectFilter);
+  const { isAllContacts } = useContacts();
 
-  const dispatch = useDispatch();
-
-  const onDeleteContact = Id => {
-    dispatch(deleteContact(Id));
+  const filteredContacts = () => {
+    if (!isAllContacts) return [];
+    const filteredItems = isAllContacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    return filteredItems;
   };
 
-  return contacts.length > 0 ? (
-    <DataList>
-      {contacts.map(({ id, name, number }) => {
-        return (
-          <DataItem key={id}>
-            <span>{name}:</span>
-            <span>{number}</span>
-            <BtnDeleteContact type="button" onClick={() => onDeleteContact(id)}>
-              <MdDeleteForever size="16" />
-              Delete
-            </BtnDeleteContact>
-          </DataItem>
-        );
-      })}
-    </DataList>
-  ) : (
-    <Notification message="There is no contacts" />
+  const filteredContactsData = filteredContacts();
+  const sortedContactsData = sortedItems(filteredContactsData);
+
+  if (sortedContactsData.length === 0) {
+    return (
+      <Container>
+        <Text>
+          Sorry, but you don't have any contacts yet. You need to add your
+          contacts.
+        </Text>
+      </Container>
+    );
+  }
+
+  return (
+    <Container mb={20}>
+      <List spacing={4}>
+        {sortedContactsData.map(({ id, name, number }) => (
+          <ListItem key={id}>
+            <Contact name={name} number={number} id={id} />
+          </ListItem>
+        ))}
+      </List>
+    </Container>
   );
 };

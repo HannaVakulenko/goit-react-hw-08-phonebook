@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchContacts, addContact, deleteContact } from './operations';
+import { logOut } from 'redux/auth/operations';
+import {
+  fetchContacts,
+  addContact,
+  deleteContact,
+  updateContact,
+} from './operations';
 
 const pendingReducer = state => {
   state.isLoading = true;
@@ -25,27 +31,33 @@ const addContactFulfilledReducer = (state, action) => {
 const deleteContactFulfilledReducer = (state, action) => {
   state.isLoading = false;
   state.error = null;
-  const index = state.items.findIndex(task => task.id === action.payload.id);
+  const index = state.items.findIndex(item => item.id === action.payload.id);
   state.items.splice(index, 1);
+};
+
+const logOutUserFulfilledReducer = state => {
+  state.items = [];
+  state.error = null;
+  state.isLoading = false;
+};
+
+const updateContactFulfilledReducer = (state, action) => {
+  const index = state.items.findIndex(item => item.id === action.payload.id);
+  state.items.splice(index, 1);
+  state.items.unshift(action.payload);
+  state.isLoading = false;
+  state.error = null;
 };
 
 const initialState = {
   items: [],
   isLoading: false,
   error: null,
-  filter: '',
 };
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
-  reducers: {
-    filteredContacts: {
-      reducer(state, action) {
-        state.filter = action.payload;
-      },
-    },
-  },
   extraReducers: builder => {
     builder
       //
@@ -59,7 +71,12 @@ const contactsSlice = createSlice({
       //
       .addCase(deleteContact.pending, pendingReducer)
       .addCase(deleteContact.fulfilled, deleteContactFulfilledReducer)
-      .addCase(deleteContact.rejected, rejectedReducer);
+      .addCase(deleteContact.rejected, rejectedReducer)
+      //
+      .addCase(updateContact.pending, pendingReducer)
+      .addCase(updateContact.fulfilled, updateContactFulfilledReducer)
+      .addCase(updateContact.rejected, rejectedReducer)
+      .addCase(logOut.fulfilled, logOutUserFulfilledReducer);
   },
 });
 

@@ -1,30 +1,24 @@
-import { FilterLabel, FilterLabelWrapper, FilterInput } from './Filter.styled';
-import { BsSearch } from 'react-icons/bs';
-
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setFilter } from 'redux/contacts/filterSlice';
-import { selectFilter } from 'redux/contacts/selectors';
+import { Input, Container } from '@chakra-ui/react';
 
 export const Filter = () => {
-  const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
 
-  const changeInputValue = e => {
-    dispatch(setFilter(e.target.value.toLowerCase().trim()));
+  const onChangeFilterInput = event => {
+    dispatch(setFilter(event.target.value.toLowerCase().trim()));
   };
 
   return (
-    <FilterLabel>
-      <FilterLabelWrapper>
-        <BsSearch size="16" />
-        Find contact by name
-      </FilterLabelWrapper>
-      <FilterInput
-        type="text"
-        value={filter}
-        onChange={changeInputValue}
-        placeholder="search..."
-      ></FilterInput>
-    </FilterLabel>
+    <Container py={4} px={4}>
+      <Input
+        as="input"
+        onInput={onChangeFilterInput}
+        name="filter"
+        placeholder="Search contact by name..."
+        minLength={3}
+        id="filter"
+      />
+    </Container>
   );
 };

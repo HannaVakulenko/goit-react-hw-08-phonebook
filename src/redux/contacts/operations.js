@@ -1,16 +1,18 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import toast from 'react-hot-toast';
 
-axios.defaults.baseURL = 'https://647b2f1dd2e5b6101db0f49b.mockapi.io'; // мій персональний mockapi-сервер
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com/';
 
-// fetchContacts - одержання масиву контактів (метод GET) запитом. Базовий тип екшену "contacts/fetchAll"
+// fetchContacts - одержання масиву контактів (метод GET) запитом. Базовий тип екшену "contacts/fetchContacts"
 export const fetchContacts = createAsyncThunk(
-  'contacts/fetchAll',
+  'contacts/fetchContacts',
   async (_, thunkAPI) => {
     try {
       const response = await axios.get('/contacts');
       return response.data;
     } catch (error) {
+      toast.error('An error occurred!', { position: 'top-center' });
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -19,11 +21,13 @@ export const fetchContacts = createAsyncThunk(
 // addContact - додавання контакту (метод POST). Базовий тип екшену "contacts/addContact"
 export const addContact = createAsyncThunk(
   'contacts/addContact',
-  async (contact, thunkAPI) => {
+  async ({ name, number }, thunkAPI) => {
     try {
-      const response = await axios.post('/contacts', contact);
+      const response = await axios.post('/contacts', { name, number });
+      toast.success('Contact added successfully!', { position: 'top-center' });
       return response.data;
     } catch (error) {
+      toast.error('An error occurred!', { position: 'top-center' });
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -35,9 +39,33 @@ export const deleteContact = createAsyncThunk(
   async (contactId, thunkAPI) => {
     try {
       const response = await axios.delete(`/contacts/${contactId}`);
+      toast.success('Contact deleted successfully!', {
+        position: 'top-center',
+      });
       return response.data;
     } catch (error) {
+      toast.error('An error occurred!', { position: 'top-center' });
       return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// updateContact - видалення контакту (метод PATCH). Базовий тип екшену "contacts/updateContact"
+export const updateContact = createAsyncThunk(
+  'contacts/updateContact',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`/contacts/${data.id}`, {
+        name: data.name,
+        number: data.number,
+      });
+      toast.success('Contact updated successfully!', {
+        position: 'top-center',
+      });
+      return response.data;
+    } catch (error) {
+      toast.error('An error occurred!', { position: 'top-center' });
+      return rejectWithValue(error.message);
     }
   }
 );
