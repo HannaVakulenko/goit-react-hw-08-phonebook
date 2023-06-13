@@ -13,12 +13,9 @@ export default function Home() {
   };
 
   const innerBoxStyles = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
     textAlign: 'center',
-    boxSize: '480',
+    width: '480px',
+    height: 'full',
     color: 'white',
     textShadow: '0 0 20px black',
     fontWeight: 'bold',
@@ -26,19 +23,19 @@ export default function Home() {
   };
 
   return (
-    <Flex flexWrap="wrap" gap="16px" justifyContent="space-evenly">
+    <Flex flexWrap="wrap" gap="16px" align="center" justify="center">
       <Box sx={outerBoxStyles}>
         <Box
           sx={innerBoxStyles}
           backdropFilter="auto"
           backdropBlur="8px"
           borderRadius="8px"
-          p="16px"
+          p="28px"
         >
           <Heading as="h1" size="xl">
-            Welcome to phonebook!{' '}
+            Welcome to Phonebook!{' '}
           </Heading>
-          <Text fontSize="xxl">
+          <Text fontSize="xxl" mt="42px">
             Create your own personal Phonebook with this app, which allows to
             view, to find and to save your contacts for never lose it!{' '}
           </Text>
